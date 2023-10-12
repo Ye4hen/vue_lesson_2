@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+	<style>
+		button {
+			cursor: pointer;
+		}
+
+		/*===========================================================================================*/
+
+		.login-wrong {
+			color: red;
+		}
+
+		.login-cyrillic {
+			color: blue;
+		}
+
+		.smiley {
+			font-size: 100px;
+		}
+
+		/*===========================================================================================*/
+		.business-class {
+			background: url('./img/business.jpg') no-repeat;
+			padding: 100px;
+		}
+
+		.econom-class {
+			background: url('./img/clouds.jpg') no-repeat;
+			padding: 50px 0;
+		}
+
+		/*===========================================================================================*/
+		.label-app3 {
+			display: flex;
+			flex-direction: column;
+		}
+
+		.label-app3 input {
+			max-width: 300px;
+		}
+
+		.incorrectWord {
+			border: 1px solid red;
+		}
+
+		.correctWord {
+			border: 1px solid green;
+		}
+
+		/*===========================================================================================*/
+		.website-top {
+			display: flex;
+			align-items: center;
+			gap: 20px;
+			margin-bottom: -20px;
+		}
+
+		.website-image {
+			width: 50px;
+			height: 50px;
+			border-radius: 50%;
+		}
+
+		.website-name {
+			margin-bottom: -20px;
+			text-transform: uppercase;
+		}
+
+		.website-link {}
+
+		.website-bottom {}
+
+		.website-title {
+			margin-bottom: -10px;
+		}
+
+		.website-desc {}
+
+		/*===========================================================================================*/
+		.app6-top {}
+
+		.app6-item {
+			display: flex;
+			align-items: center;
+			gap: 15px;
+			margin-bottom: -50px;
+		}
+
+		.app6-list {
+			display: flex;
+			align-items: start;
+			gap: 20px;
+		}
+
+		.app6-list-item {
+			border: 1px solid #000;
+			min-height: 250px;
+			padding: 20px;
+		}
+
+		.app6-title {
+			font-size: 25px;
+			margin-bottom: -25px;
+			text-align: center;
+		}
+
+		.app6-item-title {
+			font-size: 20px;
+		}
+
+		.app6-item__bottom {
+			display: flex;
+			flex-direction: column;
+		}
+
+		.app6-item__button {
+			background-color: #a63333;
+			color: #fff;
+			border: 1px solid #a63333;
+			transition: all 0.3s ease 0s;
+		}
+
+		.app6-item__button:hover {
+			color: #a63333;
+			background-color: #fff;
+		}
+
+		.empty-dish-message {
+			color: red;
+			font-size: 15px;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="app">
+		<label>
+			Login
+			<input type="text" v-model.trim="loginUser">
+		</label>
+		<br>
+		<label>
+			Password
+			<input type="password" v-model.trim="passwordUser">
+		</label>
+		<br>
+		<button @click="checkUserInfo">Go</button>
+		<div :class="messageColor">{{resultMessage}}</div>
+		<div class="smiley" v-if="showSmiley">😊</div>
+	</div>
+	<hr>
+	<div id="app2">
+		<select v-model="openTicketsList" @change="chooseTicket">
+			<option value="business">Бізнес клас</option>
+			<option value="econom">Економ клас</option>
+		</select>
+
+		<div v-if="isBusinessClass" class="business-class">
+			<button @click="chooseMagazine">Газета</button>чи<button @click="chooseKoniak">Коньяк</button>
+			<template v-if="isKoniakChosen">
+				Закуску?
+				<button @click="zakuskaYes">Yes</button>
+				<button @click="zakuskaNo">No</button>
+			</template>
+			<div v-if="iszakuskaYes">Чекайте на закуску</div>
+			<div v-else-if="iszakuskaNo">Ок без закуски</div>
+			<div v-if="isMagazineChosen">Ок чекайте на газету</div>
+		</div>
+		<div v-if="isEconomClass" class="econom-class">
+			<div>
+				Яке пиво хочете:
+				<button @click="chooseBrovary">Бровари</button>
+				<button @click="chooseKozazke">Козацьке</button>
+				<div v-if="isBrovary">Чекайте на Бровари</div>
+				<div v-else-if="isKozazke">Чекайте на Козацьке</div>
+			</div>
+			<div>
+				Які чипси хочете:
+				<button @click="chooseLays">Лейс</button>
+				<button @click="choosePringles">Прінглс</button>
+				<div v-if="isLays">Чекайте на Лейс</div>
+				<div v-else-if="isPringles">Чекайте на Прінглс</div>
+
+			</div>
+		</div>
+	</div>
+	<hr>
+	<div id="app3">
+		<div :class="{'correctWord': isCorrect, 'incorrectWord':isIncorrect}">
+			<img :src="tableImg" alt="table">
+			<h3>table</h3>
+			<label>Ваш переклад:</label>
+			<input type="text" v-model="wordTranslation" @input="clearFeedback">
+			<button @click="checkTranslation">Перевірити</button>
+			<p v-if="feedback">{{ feedback }}</p>
+		</div>
+	</div>
+	<hr>
+	<div id="app4">
+		<ul v-for="(worker, index) in workersList" :key="index">
+			<li>
+				<h4>{{worker.name}}</h4>
+				<div>Зарплата: {{worker.salary}}</div>
+			</li>
+		</ul>
+	</div>
+	<hr>
+	<div id="app5">
+		<div v-for="(website, index) in websitesList" :key="index">
+			<div class="website-top">
+				<img class="website-image" :src="website.image" alt="">
+				<div>
+					<h4 class="website-name">{{website.name}}</h4>
+					<h6 class="website-link"><a href="website.link">{{website.link}}</a></h6>
+				</div>
+			</div>
+			<div class="website-bottom">
+				<h3 class="website-title">{{website.title}}</h3>
+				<div class="website-desc">
+					<p>{{website.desc}}</p>
+				</div>
+			</div>
+		</div>
+	</div>
+	<hr>
+	<div id="app6">
+		<div class="app6-top">
+			<label>
+				Нова замовлена страва:
+				<input type="text" v-model="dishTitle">
+			</label>
+			<button @click="addDishToTheWaitingList">Додати</button>
+			<p class="empty-dish-message">{{cantAddEmptyDishMessage}}</p>
+		</div>
+		<div class="app6-list">
+			<div class="app6-list-item">
+				<h4 class="app6-title">Очікуються на виконання</h4>
+				<div class="app6-item__bottom">
+					<div class="app6-item" v-for="(waitingDish, index) in waitingList">
+						<h6 class="app6-item-title">{{waitingDish.title}}</h6>
+						<button @click="addDishToTheProcessingList(index)" class="app6-item__button">Готувати</button>
+					</div>
+				</div>
+			</div>
+			<div class="app6-list-item">
+				<h4 class="app6-title">Виконується</h4>
+				<div class="app6-item__bottom">
+					<div class="app6-item" v-for="(processingDish, index) in processingList">
+						<h6 class="app6-item-title">{{processingDish.title}}</h6>
+						<button @click="addDishToTheCompletedList(index)"
+							class="app6-item__button">Приготовлено</button>
+					</div>
+				</div>
+			</div>
+			<div class="app6-list-item">
+				<h4 class="app6-title">Готові до виносу</h4>
+				<div class="app6-item__bottom">
+					<div class="app6-item" v-for="(completedDish, index) in completedList">
+						<h6 class="app6-item-title">{{completedDish.title}}</h6>
+						<button @click="removeDishFromTheCompletedList(index)" class="app6-item__button">Подано</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+		const { createApp } = Vue;
+		const users = [
+			{
+				login: "Ivan",
+				password: 111,
+			}
+		];
+		const app = createApp({
+			data() {
+				return {
+					loginUser: null,
+					passwordUser: null,
+					resultMessage: null,
+					showSmiley: false,
+					messageColor: "login-wrong"
+				};
+			},
+			methods: {
+				checkUserInfo() {
+					this.showSmiley = false;
+
+					const foundUser = users.find((user) => {
+						return user.login === this.loginUser && user.password.toString() === this.passwordUser;
+					});
+
+					if (foundUser) {
+						this.messageColor = 'login-right';
+						this.showSmiley = true;
+						this.resultMessage = null;
+					} else if (this.loginUser === 'Іван') {
+						this.resultMessage = "Логін може бути тільки латинськими літерами";
+						this.messageColor = 'login-cyrillic';
+					} else {
+						this.resultMessage = "Логін або пароль не вірний";
+						this.messageColor = 'login-wrong';
+					}
+				}
+			}
+		}).mount('#app');
+
+		const app2 = createApp({
+			data() {
+				return {
+					openTicketsList: null,
+					isMagazineChosen: false,
+					isKoniakChosen: false,
+					iszakuskaNo: false,
+					iszakuskaYes: false,
+					isLays: false,
+					isPringles: false,
+					isBrovary: false,
+					isKozazke: false,
+				};
+			},
+			computed: {
+				isBusinessClass() {
+					return this.openTicketsList === 'business';
+				},
+				isEconomClass() {
+					return this.openTicketsList === 'econom';
+				},
+			},
+			methods: {
+				chooseTicket() {
+					if (this.openTicketsList === 'business') {
+						this.isBusinessClass = true;
+						this.isEconomClass = false;
+					} else if (this.openTicketsList === 'econom') {
+						this.isEconomClass = true;
+						this.isBusinessClass = false;
+					}
+				},
+				chooseMagazine() {
+					this.isMagazineChosen = true;
+					this.isKoniakChosen = false;
+					this.iszakuskaNo = false;
+					this.iszakuskaYes = false;
+				},
+				chooseKoniak() {
+					this.isMagazineChosen = false;
+					this.isKoniakChosen = true;
+				},
+				zakuskaYes() {
+					this.iszakuskaNo = false;
+					this.iszakuskaYes = true;
+					this.isKoniakChosen = false;
+				},
+				zakuskaNo() {
+					this.iszakuskaNo = true;
+					this.iszakuskaYes = false;
+					this.isKoniakChosen = false;
+				},
+				chooseLays() {
+					this.isPringles = false;
+					this.isLays = true;
+				},
+				choosePringles() {
+					this.isPringles = true;
+					this.isLays = false;
+				},
+				chooseBrovary() {
+					this.isKozazke = false;
+					this.isBrovary = true;
+				},
+				chooseKozazke() {
+					this.isKozazke = true;
+					this.isBrovary = false;
+				}
+			},
+		}).mount('#app2');
+
+		const app3 = createApp({
+			data() {
+				return {
+					tableImg: "./img/table.jpg",
+					wordTranslation: null,
+					isCorrect: null,
+					isIncorrect: null,
+					feedback: null,
+				};
+			},
+			methods: {
+				checkTranslation() {
+					const userTranslation = this.wordTranslation.toLowerCase();
+					const correctTranslation = "стіл";
+					if (this.wordTranslation) {
+						if (userTranslation === correctTranslation) {
+							this.isCorrect = true;
+							this.isIncorrect = false;
+							this.feedback = "Добре. Молодець!";
+						} else {
+							this.isCorrect = false;
+							this.isIncorrect = true;
+							this.feedback = "Невірно, спробуйте ще раз";
+						}
+					}
+				},
+				clearFeedback() {
+					this.feedback = "";
+					this.isCorrect = null;
+				},
+			},
+		}).mount('#app3');
+
+		const workersInfo = [
+			{
+				id: '111',
+				name: 'Іванов',
+				salary: 10000,
+			},
+			{
+				id: '111',
+				name: 'Петров',
+				salary: 20000,
+			},
+			{
+				id: '111',
+				name: 'Сидоров',
+				salary: 50000,
+			},
+		];
+		const app4 = createApp({
+			computed: {
+				workersList() {
+					return workersInfo
+				}
+			},
+		}).mount("#app4");
+
+		const websitesInfo = [
+			{
+				id: '1',
+				image: './img/vue.png',
+				name: 'vueframework',
+				link: 'https://vuejs.org/',
+				title: 'Modern Framework',
+				desc: 'Approachable. Builds on top of standard HTML, CSS and JavaScript with intuitive API and world-class documentation. · Performant. Truly reactive, compiler- ...'
+			},
+			{
+				id: '2',
+				image: './img/angular.png',
+				name: 'Angular',
+				link: 'https://angular.io',
+				title: 'Old Framework',
+				desc: 'Angular lets you start small and supports you as your team and apps grow.'
+			},
+			{
+				id: '3',
+				image: './img/react.png',
+				name: 'React',
+				link: 'https://react.dev',
+				title: 'Not Old and Not Young Framework',
+				desc: "React is a community. It's a place where you can ask for help, find opportunities, and meet new friends.You will meet both developers and designers, beginners ..."
+			},
+			{
+				id: '4',
+				image: './img/node.png',
+				name: 'Node.js',
+				link: 'https://nodejs.org',
+				title: 'Not a Framework at all',
+				desc: "Node.js® is a JavaScript runtime built on Chrome's V8 JavaScript engine."
+			},
+		];
+		const app5 = createApp({
+			computed: {
+				websitesList() {
+					return websitesInfo
+				}
+			},
+		}).mount("#app5");
+
+		const app6 = createApp({
+			data() {
+				return {
+					waitingList: [
+						{
+							title: 'Голубці',
+						},
+						{
+							title: 'Грибовий суп',
+						}
+					],
+					processingList: [
+						{
+							title: 'Салат Цезар',
+						},
+						{
+							title: 'Салат Грецький',
+						},
+						{
+							title: 'Млинці з вишнями',
+						}
+					],
+					completedList: [
+						{
+							title: 'Борщ',
+						},
+						{
+							title: 'Плов з овочами',
+						}
+					],
+					dishTitle: null,
+					cantAddEmptyDishMessage: null,
+				}
+			},
+			computed: {
+				waitingList() {
+					return this.waitingList;
+				},
+				processingList() {
+					return this.processingList;
+				},
+			},
+			methods: {
+				addDishToTheWaitingList() {
+					if (this.dishTitle) {
+						this.waitingList.push({
+							title: this.dishTitle,
+						})
+						this.dishTitle = null;
+					} else {
+						return this.cantAddEmptyDishMessage = "Не можна додати пустий рядок)";
+					}
+				},
+				addDishToTheProcessingList(index) {
+					this.processingList.push(this.waitingList[index]);
+					this.waitingList.splice(index, 1);
+				},
+				addDishToTheCompletedList(index) {
+					this.completedList.push(this.processingList[index]);
+					this.processingList.splice(index, 1);
+				},
+				removeDishFromTheCompletedList(index) {
+					this.completedList.splice(index, 1);
+				}
+			},
+		}).mount("#app6");
+	</script>
+</body>
+
+</html>
