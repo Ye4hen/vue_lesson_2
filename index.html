@@ -204,7 +204,7 @@
 	</div>
 	<hr>
 	<div id="app4">
-		<ul v-for="(worker, index) in workersList" :key="index">
+		<ul v-for="(worker, index) in workersList" :key="worker.id">
 			<li>
 				<h4>{{worker.name}}</h4>
 				<div>Зарплата: {{worker.salary}}</div>
@@ -213,7 +213,7 @@
 	</div>
 	<hr>
 	<div id="app5">
-		<div v-for="(website, index) in websitesList" :key="index">
+		<div v-for="website in websitesList" :key="website.id">
 			<div class="website-top">
 				<img class="website-image" :src="website.image" alt="">
 				<div>
@@ -243,7 +243,7 @@
 			<div class="app6-list-item">
 				<h4 class="app6-title">Очікуються на виконання</h4>
 				<div class="app6-item__bottom">
-					<div class="app6-item" v-for="(waitingDish, index) in waitingList">
+					<div class="app6-item" v-for="(waitingDish, index) in waitingList" :key="waitingDish.id">
 						<h6 class="app6-item-title">{{waitingDish.title}}</h6>
 						<button @click="addDishToTheProcessingList(index)" class="app6-item__button">Готувати</button>
 					</div>
@@ -252,7 +252,7 @@
 			<div class="app6-list-item">
 				<h4 class="app6-title">Виконується</h4>
 				<div class="app6-item__bottom">
-					<div class="app6-item" v-for="(processingDish, index) in processingList">
+					<div class="app6-item" v-for="(processingDish, index) in processingList" :key="processingDish.id">
 						<h6 class="app6-item-title">{{processingDish.title}}</h6>
 						<button @click="addDishToTheCompletedList(index)"
 							class="app6-item__button">Приготовлено</button>
@@ -262,7 +262,7 @@
 			<div class="app6-list-item">
 				<h4 class="app6-title">Готові до виносу</h4>
 				<div class="app6-item__bottom">
-					<div class="app6-item" v-for="(completedDish, index) in completedList">
+					<div class="app6-item" v-for="(completedDish, index) in completedList" :key="completedDish.id">
 						<h6 class="app6-item-title">{{completedDish.title}}</h6>
 						<button @click="removeDishFromTheCompletedList(index)" class="app6-item__button">Подано</button>
 					</div>
@@ -417,17 +417,17 @@
 
 		const workersInfo = [
 			{
-				id: '111',
+				id: '1',
 				name: 'Іванов',
 				salary: 10000,
 			},
 			{
-				id: '111',
+				id: '2',
 				name: 'Петров',
 				salary: 20000,
 			},
 			{
-				id: '111',
+				id: '3',
 				name: 'Сидоров',
 				salary: 50000,
 			},
@@ -487,28 +487,35 @@
 				return {
 					waitingList: [
 						{
+							id: 1,
 							title: 'Голубці',
 						},
 						{
+							id: 2,
 							title: 'Грибовий суп',
 						}
 					],
 					processingList: [
 						{
+							id: 1,
 							title: 'Салат Цезар',
 						},
 						{
+							id: 2,
 							title: 'Салат Грецький',
 						},
 						{
+							id: 3,
 							title: 'Млинці з вишнями',
 						}
 					],
 					completedList: [
 						{
+							id: 1,
 							title: 'Борщ',
 						},
 						{
+							id: 2,
 							title: 'Плов з овочами',
 						}
 					],
